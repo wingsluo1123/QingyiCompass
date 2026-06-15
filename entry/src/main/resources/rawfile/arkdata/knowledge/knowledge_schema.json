@@ -1,0 +1,28 @@
+{
+  "knowledgeSource": [{
+    "version": 1,
+    "dbName": "compass_knowledge.db",
+    "tables": [{
+      "tableName": "knowledge",
+      "referenceFields": ["id"],
+      "knowledgeFields": [{
+        "columnName": "title",
+        "type": ["Text"]
+      },
+      {
+        "columnName": "content",
+        "type": ["Text"]
+      },
+      {
+        "columnName": "source",
+        "type": ["Scalar"],
+        "description": "source"
+      },
+      {
+        "columnName": "category",
+        "type": ["Scalar"],
+        "description": "category"
+      }]
+    }]
+  }]
+}

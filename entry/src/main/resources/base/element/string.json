@@ -1,0 +1,100 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "清一罗盘"
+    },
+    {
+      "name": "mag",
+      "value": "%sμT"
+    },
+    {
+      "name": "hpa",
+      "value": "%s百帕"
+    },
+    {
+      "name": "meter",
+      "value": "%s米"
+    },
+    {
+      "name": "degree",
+      "value": "%d°"
+    },
+    {
+      "name": "magnetic",
+      "value": "磁场"
+    },
+    {
+      "name": "altitude",
+      "value": "海拔"
+    },
+    {
+      "name": "pressure",
+      "value": "气压"
+    },
+    {
+      "name": "N",
+      "value": "北"
+    },
+    {
+      "name": "EN",
+      "value": "东北"
+    },
+    {
+      "name": "E",
+      "value": "东"
+    },
+    {
+      "name": "ES",
+      "value": "东南"
+    },
+    {
+      "name": "S",
+      "value": "南"
+    },
+    {
+      "name": "WS",
+      "value": "西南"
+    },
+    {
+      "name": "W",
+      "value": "西"
+    },
+    {
+      "name": "WN",
+      "value": "西北"
+    },
+    {
+      "name": "getLocation",
+      "value": "当前应用需要展示经纬度信息"
+    },
+    {
+      "name": "default_show",
+      "value": "--"
+    },
+    {
+      "name": "north_latitude",
+      "value": "北纬%s"
+    },
+    {
+      "name": "south_latitude",
+      "value": "南纬%s"
+    },
+    {
+      "name": "east_longitude",
+      "value": "东经%s"
+    },
+    {
+      "name": "west_longitude",
+      "value": "西经%s"
+    }
+  ]
+}

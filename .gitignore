@@ -1,0 +1,52 @@
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+/.appanalyzer
+rag_server/.env.local
+
+# Local audit packages and device logs
+/.codex-review/
+
+# Signing keys, certificates and local signing configuration
+/build-profile.json5
+/*.p12
+/*.p7b
+/*.cer
+/*.csr
+/*.pem
+/*.key
+/*.jks
+/*.keystore
+
+# Huawei AG Connect credentials
+/AppScope/resources/rawfile/agconnect-services.json
+
+# Private feng shui knowledge and core calculation implementation
+/entry/src/main/resources/rawfile/knowledge_*.txt
+/entry/src/main/ets/common/CompassConstants.ets
+/entry/src/main/ets/model/DirectionInfo.ets
+/entry/src/main/ets/pages/CompassPage.ets
+/entry/src/main/ets/pages/Chart.ets
+/entry/src/main/ets/component/CompassView.ets
+/entry/src/main/ets/component/ChartView.ets
+/entry/src/main/ets/component/DirectionInfoDialog.ets
+
+# Local RAG data derived from private knowledge
+/rag_server/chroma_data/
+**/__pycache__/
+*.py[cod]
+
+# Private notes and generated personal documents
+/IDE_CONFIG_README.md
+/每个阶段的教程.md
+/面试深挖问答.md
+/面试深挖问答.pdf
+/rag_server/遇到的坑.md

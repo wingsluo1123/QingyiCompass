@@ -1,0 +1,13 @@
+{
+  "module": {
+    "name": "markdown",
+    "type": "har",
+    "deviceTypes": [
+      "default"
+    ],
+    "requestPermissions": [
+      // Offline release: restore INTERNET when remote Markdown images are enabled again.
+      // { "name": "ohos.permission.INTERNET" }
+    ]
+  }
+}

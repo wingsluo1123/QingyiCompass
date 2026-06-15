@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- 左页 -->
+  <path d="M2.8,4.5 L11.6,4.5 L11.6,19.5 L3.2,19.5 C2.3,19.5 1.5,18.8 1.5,18 L1.5,6 C1.5,5.2 2,4.5 2.8,4.5 Z" fill="currentColor" fill-opacity="0.22"/>
+  <!-- 右页 -->
+  <path d="M12.4,4.5 L21.2,4.5 C22,4.5 22.5,5.2 22.5,6 L22.5,18 C22.5,18.8 21.7,19.5 20.8,19.5 L12.4,19.5 Z" fill="currentColor" fill-opacity="0.35"/>
+  <!-- 书脊中线 -->
+  <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="0.7" stroke-opacity="0.22"/>
+  <!-- 左页文字行 -->
+  <rect x="4.5" y="8.2" width="5" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.45"/>
+  <rect x="4.5" y="10.5" width="3.8" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.3"/>
+  <rect x="4.5" y="12.8" width="5" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.18"/>
+  <!-- 右页文字行 -->
+  <rect x="14" y="8.2" width="5" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.45"/>
+  <rect x="14" y="10.5" width="3.8" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.3"/>
+  <rect x="14" y="12.8" width="5" height="0.85" rx="0.4" fill="currentColor" fill-opacity="0.18"/>
+  <!-- 书签 -->
+  <path d="M17.5,4.5 L17.5,8 L15.7,6.7 L14,8 L14,4.5 Z" fill="currentColor" fill-opacity="0.55"/>
+</svg>

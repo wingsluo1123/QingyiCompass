@@ -1,0 +1,108 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#F5F8F4"
+    },
+    {
+      "name": "primary_green",
+      "value": "#7BA891"
+    },
+    {
+      "name": "light_green",
+      "value": "#C8E6C9"
+    },
+    {
+      "name": "classical_gold",
+      "value": "#C9A961"
+    },
+    {
+      "name": "bright_gold",
+      "value": "#FFD700"
+    },
+    {
+      "name": "text_primary",
+      "value": "#2C3E2F"
+    },
+    {
+      "name": "text_secondary",
+      "value": "#6B7E71"
+    },
+    {
+      "name": "card_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "accent_red",
+      "value": "#C65D57"
+    },
+    {
+      "name": "elegant_blue",
+      "value": "#0d6efd"
+    },
+    {
+      "name": "elegant_purple",
+      "value": "#9B59B6"
+    },
+    {
+      "name": "earth_brown",
+      "value": "#8B6F47"
+    },
+    {
+      "name": "mud_yellow",
+      "value": "#B8A86F"
+    },
+    {
+      "name": "silver_white",
+      "value": "#808080"
+    },
+    {
+      "name": "light_blue",
+      "value": "#ADD8E6"
+    },
+    {
+      "name": "surface_border",
+      "value": "#E4EDF5"
+    },
+    {
+      "name": "divider",
+      "value": "#E7EEF5"
+    },
+    {
+      "name": "button_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "button_text",
+      "value": "#1F2937"
+    },
+    {
+      "name": "badge_background",
+      "value": "#EAF3FF"
+    },
+    {
+      "name": "muted_icon",
+      "value": "#8996A3"
+    },
+    {
+      "name": "card_shadow",
+      "value": "#0D6EFD12"
+    },
+    {
+      "name": "splash_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "splash_logo_surface",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "splash_logo_border",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "splash_logo_shadow",
+      "value": "#00000000"
+    }
+  ]
+}

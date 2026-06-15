@@ -1,0 +1,13 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    // Offline release: restore fluid-markdown with the AI chat feature.
+    // "fluid-markdown": "file:../markdown"
+  }
+}
+

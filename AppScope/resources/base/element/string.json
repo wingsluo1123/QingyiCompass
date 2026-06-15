@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "清一罗盘"
+    },
+    {
+      "name": "agcit_huawei_OfficeTools_Compass",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_huawei_OfficeTools_Compass",
+      "value": "sceneTemplate"
+    }
+  ]
+}

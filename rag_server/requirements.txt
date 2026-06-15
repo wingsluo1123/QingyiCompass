@@ -1,0 +1,17 @@
+# Compass RAG Server
+#
+# Python 端 RAG 知识检索服务，为 HarmonyOS 罗盘 App 提供风水经典知识检索。
+# 与端侧 RAGService.ets 的接口约定保持一致，通过 SSE 流式返回结果。
+#
+# 技术栈: FastAPI + ChromaDB + sentence-transformers + rank-bm25
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+rank-bm25>=0.2.2
+pydantic>=2.0.0
+jieba>=0.42.1
+sse-starlette>=2.0.0
+pypdf>=4.0.0
+python-docx>=1.1.0
