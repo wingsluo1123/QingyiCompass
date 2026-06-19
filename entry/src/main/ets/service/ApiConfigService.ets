@@ -100,13 +100,7 @@ export class ApiConfigService {
     if (!this.store) {
       return DEFAULT_RAG_TOKEN;
     }
-    let token: string = (await this.store.get(KEY_RAG_TOKEN, DEFAULT_RAG_TOKEN) as string).trim();
-    if (token !== DEFAULT_RAG_TOKEN) {
-      await this.store.put(KEY_RAG_TOKEN, DEFAULT_RAG_TOKEN);
-      await this.store.flush();
-      return DEFAULT_RAG_TOKEN;
-    }
-    return token;
+    return (await this.store.get(KEY_RAG_TOKEN, DEFAULT_RAG_TOKEN) as string).trim();
   }
 
   async saveRagToken(token: string): Promise<boolean> {

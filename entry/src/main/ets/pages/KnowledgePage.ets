@@ -345,7 +345,7 @@ export struct KnowledgePage {
         Button({ type: ButtonType.Circle, stateEffect: true }) {
           Text('←')
             .fontSize(20)
-            .fontColor('#666')
+            .fontColor($r('app.color.text_secondary'))
         }
         .width(44)
         .height(44)
@@ -371,7 +371,7 @@ export struct KnowledgePage {
               .fontColor($r('app.color.elegant_blue'))
               .height(36)
               .padding({ left: 14, right: 14 })
-              .backgroundColor('#FFFFFF')
+              .backgroundColor($r('app.color.card_background'))
               .border({ width: 1, color: $r('app.color.elegant_blue') })
               .borderRadius(18)
               .enabled(!this.isRefreshing && !this.isUploading)
@@ -381,10 +381,10 @@ export struct KnowledgePage {
 
             Button(this.isUploading ? '向量化中' : '上传文档')
               .fontSize(13)
-              .fontColor('#FFFFFF')
+              .fontColor($r('app.color.primary_action_text'))
               .height(36)
               .padding({ left: 14, right: 14 })
-              .backgroundColor(this.isUploading ? '#999999' : $r('app.color.elegant_blue'))
+              .backgroundColor(this.isUploading ? $r('app.color.muted_icon') : $r('app.color.elegant_blue'))
               .borderRadius(18)
               .enabled(!this.isUploading && !this.isRefreshing)
               .onClick(() => {
@@ -401,10 +401,10 @@ export struct KnowledgePage {
           Row() {
             Text(this.selectedDoc.source)
               .fontSize(12)
-              .fontColor('#FFFFFF')
+              .fontColor($r('app.color.primary_action_text'))
               .fontWeight(FontWeight.Medium)
               .padding({ left: 10, right: 10, top: 4, bottom: 4 })
-              .backgroundColor(this.selectedDoc.source === '内置经典' ? $r('app.color.elegant_blue') : '#E5534B')
+              .backgroundColor(this.selectedDoc.source === '内置经典' ? $r('app.color.elegant_blue') : $r('app.color.danger'))
               .borderRadius(10)
           }
           .width('100%')
@@ -439,7 +439,7 @@ export struct KnowledgePage {
                 }
                 .width('100%')
                 .padding(16)
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('app.color.card_background'))
                 .borderRadius(12)
               }
               .width('100%')
@@ -464,7 +464,7 @@ export struct KnowledgePage {
               .fontColor($r('app.color.text_secondary'))
           }
           .padding(20)
-          .backgroundColor('#FFFFFF')
+          .backgroundColor($r('app.color.card_background'))
           .borderRadius({topLeft: 14, bottomLeft: 14})
           .layoutWeight(1)
 
@@ -478,7 +478,7 @@ export struct KnowledgePage {
               .fontColor($r('app.color.text_secondary'))
           }
           .padding(20)
-          .backgroundColor('#FFFFFF')
+          .backgroundColor($r('app.color.card_background'))
           // .borderRadius(14)
           .layoutWeight(1)
 
@@ -486,13 +486,13 @@ export struct KnowledgePage {
             Text(this.getDisplayUserCount().toString())
               .fontSize(36)
               .fontWeight(FontWeight.Bold)
-              .fontColor('#E5534B')
+              .fontColor($r('app.color.danger'))
             Text('用户上传')
               .fontSize(12)
               .fontColor($r('app.color.text_secondary'))
           }
           .padding(20)
-          .backgroundColor('#FFFFFF')
+          .backgroundColor($r('app.color.card_background'))
           .borderRadius({topRight: 14, bottomRight: 14})
           .layoutWeight(1)
         }
@@ -522,12 +522,12 @@ export struct KnowledgePage {
                   Text(doc.source === '内置经典' ? '经' : '用')
                     .fontSize(14)
                     .fontWeight(FontWeight.Bold)
-                    .fontColor('#FFFFFF')
+                    .fontColor($r('app.color.primary_action_text'))
                 }
                 .width(44)
                 .height(44)
                 .borderRadius(11)
-                .backgroundColor(doc.source === '内置经典' ? $r('app.color.elegant_blue') : '#E5534B')
+                .backgroundColor(doc.source === '内置经典' ? $r('app.color.elegant_blue') : $r('app.color.danger'))
                 .justifyContent(FlexAlign.Center)
                 .alignItems(HorizontalAlign.Center)
 
@@ -552,7 +552,7 @@ export struct KnowledgePage {
                 Button({ type: ButtonType.Circle, stateEffect: true }) {
                   Text('→')
                     .fontSize(16)
-                    .fontColor('#999')
+                    .fontColor($r('app.color.muted_icon'))
                 }
                 .width(36)
                 .height(36)
@@ -571,7 +571,7 @@ export struct KnowledgePage {
               }
               .width('80%')
               .height(0.5)
-              .backgroundColor('#F0F0F0')
+              .backgroundColor($r('app.color.divider'))
             }
           })
         }

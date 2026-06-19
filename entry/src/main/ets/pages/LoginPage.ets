@@ -137,7 +137,7 @@ export struct LoginPage {
         Text('<')
           .fontSize(20)
           .fontWeight(FontWeight.Medium)
-          .fontColor('#666')
+          .fontColor($r('app.color.text_secondary'))
           .onClick(() => {
             router.back();
           })
@@ -167,13 +167,13 @@ export struct LoginPage {
                 .height(72)
                 .borderRadius(36)
                 .objectFit(ImageFit.Cover)
-                .shadow({ radius: 18, color: '#163D4A1A', offsetX: 0, offsetY: 6 })
+                .shadow({ radius: 18, color: $r('app.color.card_shadow'), offsetX: 0, offsetY: 6 })
             } else {
               Image($r('app.media.qingyi'))
                 .width(72)
                 .height(72)
                 .borderRadius(18)
-                .shadow({ radius: 18, color: '#163D4A1A', offsetX: 0, offsetY: 6 })
+                .shadow({ radius: 18, color: $r('app.color.card_shadow'), offsetX: 0, offsetY: 6 })
             }
 
             Text(this.isLoggedIn ? (this.nickName.length > 0 ? this.nickName : '已登录华为账号') : '登录后使用个人知识库')
@@ -198,11 +198,11 @@ export struct LoginPage {
                   .fontSize(14)
                   .fontColor($r('app.color.text_secondary'))
                   .layoutWeight(1)
-                this.statusPill('Active', '#176B43', '#E4F5EA')
+                this.statusPill('Active', $r('app.color.success'), $r('app.color.success_background'))
               }
               .width('100%')
 
-              Divider().color('#EEF2EE')
+              Divider().color($r('app.color.divider'))
 
               if (this.nickName.length > 0) {
                 Row() {
@@ -248,8 +248,8 @@ export struct LoginPage {
                   .fontColor($r('app.color.text_secondary'))
                   .layoutWeight(1)
                 this.statusPill(this.hasServerSession ? 'Ready' : 'Local only',
-                  this.hasServerSession ? '#176B43' : '#8B6F47',
-                  this.hasServerSession ? '#E4F5EA' : '#FFF4D8')
+                  this.hasServerSession ? $r('app.color.success') : $r('app.color.warning'),
+                  this.hasServerSession ? $r('app.color.success_background') : $r('app.color.warning_background'))
               }
               .width('100%')
 
@@ -259,14 +259,14 @@ export struct LoginPage {
                   .fontColor($r('app.color.text_secondary'))
                   .layoutWeight(1)
                 this.statusPill('Level ' + this.accountLevel.toString(),
-                  this.accountLevel >= 3 ? '#176B43' : '#8B6F47',
-                  this.accountLevel >= 3 ? '#E4F5EA' : '#FFF4D8')
+                  this.accountLevel >= 3 ? $r('app.color.success') : $r('app.color.warning'),
+                  this.accountLevel >= 3 ? $r('app.color.success_background') : $r('app.color.warning_background'))
               }
               .width('100%')
             }
             .width('100%')
             .padding(18)
-            .backgroundColor('#FFFFFF')
+            .backgroundColor($r('app.color.card_background'))
             .borderRadius(8)
 
             Button('退出登录')
@@ -275,7 +275,7 @@ export struct LoginPage {
               .fontSize(16)
               .fontWeight(FontWeight.Medium)
               .fontColor($r('app.color.accent_red'))
-              .backgroundColor('#FFFFFF')
+              .backgroundColor($r('app.color.card_background'))
               .borderRadius(8)
               .onClick(() => {
                 this.logout();
@@ -303,7 +303,7 @@ export struct LoginPage {
             }
             .width('100%')
             .padding(18)
-            .backgroundColor('#FFFFFF')
+            .backgroundColor($r('app.color.card_background'))
             .borderRadius(8)
           }
         }

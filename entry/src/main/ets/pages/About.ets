@@ -1,48 +1,46 @@
-// Offline release: restore AbilityKit and AuthService imports when account features are enabled again.
 import { common, ConfigurationConstant } from '@kit.AbilityKit';
 import { router } from '@kit.ArkUI';
 import ThemeService from '../service/ThemeService';
-// import AuthService, { HuaweiUserSession } from '../service/AuthService';
+import AuthService, { HuaweiUserSession } from '../service/AuthService';
 
 @Entry
 @Component
 export struct About {
   @StorageLink('isDarkMode') private isDarkMode: boolean = false;
-  // Offline release: restore these states and lifecycle methods with account/knowledge-base features.
-  // @State private isLoggedIn: boolean = false;
-  // @State private accountLabel: string = '登录华为账号';
-  // @State private accountHint: string = '用于个人知识库与文档权限';
-  // @StorageLink('authIsLoggedIn') private authIsLoggedIn: boolean = false;
-  // @StorageLink('authNickName') private authNickName: string = '';
-  // @StorageLink('authAvatarUri') private authAvatarUri: string = '';
-  // @StorageLink('authLabel') private authLabel: string = 'Guest';
-  // @StorageLink('authLevel') private authLevel: number = 0;
-  //
-  // aboutToAppear(): void {
-  //   this.loadAccountState();
-  // }
-  //
-  // onPageShow(): void {
-  //   this.loadAccountState();
-  // }
-  //
-  // private async loadAccountState(): Promise<void> {
-  //   let context: common.UIAbilityContext =
-  //     AppStorage.get<common.UIAbilityContext>('Context') as common.UIAbilityContext;
-  //   await AuthService.init(context);
-  //   let session: HuaweiUserSession | null = await AuthService.getCurrentUser();
-  //   this.isLoggedIn = session !== null;
-  //   let nickName: string = session?.nickName ?? '';
-  //   this.accountLabel = this.isLoggedIn ? (nickName.length > 0 ? nickName : 'Huawei account') : '登录华为账号';
-  //   this.accountHint = this.isLoggedIn ? '个人文档已按账号隔离' : '登录后启用个人知识库隔离';
-  // }
-  //
-  // private getDisplayName(): string {
-  //   if (this.authIsLoggedIn && this.authLabel.length > 0) {
-  //     return this.authLabel;
-  //   }
-  //   return this.accountLabel;
-  // }
+  @State private isLoggedIn: boolean = false;
+  @State private accountLabel: string = '登录华为账号';
+  @State private accountHint: string = '用于个人知识库与文档权限';
+  @StorageLink('authIsLoggedIn') private authIsLoggedIn: boolean = false;
+  @StorageLink('authNickName') private authNickName: string = '';
+  @StorageLink('authAvatarUri') private authAvatarUri: string = '';
+  @StorageLink('authLabel') private authLabel: string = 'Guest';
+  @StorageLink('authLevel') private authLevel: number = 0;
+
+  aboutToAppear(): void {
+    this.loadAccountState();
+  }
+
+  onPageShow(): void {
+    this.loadAccountState();
+  }
+
+  private async loadAccountState(): Promise<void> {
+    let context: common.UIAbilityContext =
+      AppStorage.get<common.UIAbilityContext>('Context') as common.UIAbilityContext;
+    await AuthService.init(context);
+    let session: HuaweiUserSession | null = await AuthService.getCurrentUser();
+    this.isLoggedIn = session !== null;
+    let nickName: string = session?.nickName ?? '';
+    this.accountLabel = this.isLoggedIn ? (nickName.length > 0 ? nickName : 'Huawei account') : '登录华为账号';
+    this.accountHint = this.isLoggedIn ? '个人文档已按账号隔离' : '登录后启用个人知识库隔离';
+  }
+
+  private getDisplayName(): string {
+    if (this.authIsLoggedIn && this.authLabel.length > 0) {
+      return this.authLabel;
+    }
+    return this.accountLabel;
+  }
 
   private navigateTo(targetUrl: string): void {
     if (targetUrl.length === 0) {
@@ -61,24 +59,23 @@ export struct About {
       ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT);
   }
 
-  // Offline release: restore levelBadge() with account features.
-  // @Builder
-  // levelBadge() {
-  //   Row({ space: 6 }) {
-  //     Text('H')
-  //       .fontSize(12)
-  //       .fontWeight(FontWeight.Bold)
-  //       .fontColor('#FFFFFF')
-  //     Text(this.authIsLoggedIn ? 'Level ' + this.authLevel.toString() : 'Guest')
-  //       .fontSize(13)
-  //       .fontWeight(FontWeight.Medium)
-  //       .fontColor($r('app.color.text_primary'))
-  //   }
-  //   .height(34)
-  //   .padding({ left: 12, right: 14 })
-  //   .backgroundColor('#EEF6F1')
-  //   .borderRadius(17)
-  // }
+  @Builder
+  levelBadge() {
+    Row({ space: 6 }) {
+      Text('H')
+        .fontSize(12)
+        .fontWeight(FontWeight.Bold)
+        .fontColor($r('app.color.primary_action_text'))
+      Text(this.authIsLoggedIn ? 'Level ' + this.authLevel.toString() : 'Guest')
+        .fontSize(13)
+        .fontWeight(FontWeight.Medium)
+        .fontColor($r('app.color.text_primary'))
+    }
+    .height(34)
+    .padding({ left: 12, right: 14 })
+    .backgroundColor($r('app.color.badge_background'))
+    .borderRadius(17)
+  }
 
   @Builder
   sectionTitle(title: string) {
@@ -197,25 +194,23 @@ export struct About {
             .fontColor($r('app.color.text_primary'))
             .layoutWeight(1)
 
-          // Offline release: account settings entry is disabled.
-          // Button({ type: ButtonType.Circle, stateEffect: true }) {
-          //   Image($r('app.media.icon_settings'))
-          //     .width(22)
-          //     .height(22)
-          // }
-          // .width(52)
-          // .height(52)
-          // .backgroundColor('#FFFFFF')
-          // .border({ width: 1, color: '#DFE8E2' })
-          // .onClick(() => {
-          //   this.navigateTo('pages/LoginPage');
-          // })
+          Button({ type: ButtonType.Circle, stateEffect: true }) {
+            Image($r('app.media.icon_settings'))
+              .width(22)
+              .height(22)
+              .fillColor($r('app.color.text_secondary'))
+          }
+          .width(52)
+          .height(52)
+          .backgroundColor($r('app.color.card_background'))
+          .border({ width: 1, color: $r('app.color.surface_border') })
+          .onClick(() => {
+            this.navigateTo('pages/LoginPage');
+          })
         }
         .width('100%')
         .padding({ top: 30 })
 
-        // Offline release: the account and personal knowledge-base card is disabled.
-        /*
         Column() {
           Row({ space: 18 }) {
             if (this.authIsLoggedIn && this.authAvatarUri.length > 0) {
@@ -224,14 +219,14 @@ export struct About {
                 .height(92)
                 .borderRadius(46)
                 .objectFit(ImageFit.Cover)
-                .border({ width: 3, color: '#B8D8FF' })
+                .border({ width: 3, color: $r('app.color.elegant_blue') })
             } else {
               Image($r('app.media.qingyi'))
                 .width(92)
                 .height(92)
                 .borderRadius(46)
                 .objectFit(ImageFit.Cover)
-                .border({ width: 3, color: '#B8D8FF' })
+                .border({ width: 3, color: $r('app.color.elegant_blue') })
             }
 
             Column({ space: 9 }) {
@@ -261,7 +256,7 @@ export struct About {
           .padding({ left: 20, right: 20, top: 24, bottom: 22 })
 
           Divider()
-            .color('#E7EEE9')
+            .color($r('app.color.divider'))
             .margin({ left: 20, right: 20 })
 
           Row() {
@@ -282,8 +277,8 @@ export struct About {
               .padding({ left: 18, right: 18 })
               .fontSize(15)
               .fontWeight(FontWeight.Medium)
-              .fontColor('#FFFFFF')
-              .backgroundColor($r('app.color.primary_green'))
+              .fontColor($r('app.color.primary_action_text'))
+              .backgroundColor($r('app.color.elegant_blue'))
               .borderRadius(19)
               .onClick(() => {
                 this.navigateTo('pages/LoginPage');
@@ -294,9 +289,9 @@ export struct About {
         }
         .width('100%')
         .backgroundColor($r('app.color.card_background'))
-        .borderRadius(8)
-        .shadow({ radius: 18, color: '#163D4A12', offsetX: 0, offsetY: 8 })
-        */
+        .borderRadius(16)
+        .border({ width: 1, color: $r('app.color.surface_border') })
+        .shadow({ radius: 16, color: $r('app.color.card_shadow'), offsetX: 0, offsetY: 6 })
 
         Column() {
           Row({ space: 18 }) {
@@ -317,7 +312,7 @@ export struct About {
                 .fontSize(14)
                 .fontColor($r('app.color.text_secondary'))
 
-              Text('后端能力敬请期待')
+              Text('后端能力已开启')
                 .fontSize(12)
                 .fontWeight(FontWeight.Medium)
                 .fontColor($r('app.color.elegant_blue'))
@@ -368,10 +363,9 @@ export struct About {
             .color($r('app.color.divider'))
             .margin({ left: 16, right: 16 })
 
-          // Offline release: restore the account entry with account/knowledge-base features.
-          // this.menuItem('A', '账号与登录',
-          //   this.authIsLoggedIn ? '管理华为账号、头像昵称和登录状态' : '登录后启用个人文档隔离',
-          //   $r('app.color.elegant_blue'), 'pages/LoginPage', true)
+          this.menuItem('A', '账号与登录',
+            this.authIsLoggedIn ? '管理华为账号、头像昵称和登录状态' : '登录后启用个人文档隔离',
+            $r('app.color.elegant_blue'), 'pages/LoginPage', true)
           this.menuItem('I', '关于清一罗盘', '应用简介、联系方式与交流信息',
             $r('app.color.elegant_blue'), 'pages/AppAboutPage', false)
         }

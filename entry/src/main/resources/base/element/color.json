@@ -89,6 +89,50 @@
       "value": "#0D6EFD12"
     },
     {
+      "name": "input_background",
+      "value": "#F5F7FA"
+    },
+    {
+      "name": "primary_action",
+      "value": "#2196F3"
+    },
+    {
+      "name": "primary_action_text",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "danger",
+      "value": "#E5534B"
+    },
+    {
+      "name": "danger_background",
+      "value": "#FFF1F0"
+    },
+    {
+      "name": "success",
+      "value": "#176B43"
+    },
+    {
+      "name": "success_background",
+      "value": "#E4F5EA"
+    },
+    {
+      "name": "warning",
+      "value": "#8B6F47"
+    },
+    {
+      "name": "warning_background",
+      "value": "#FFF4D8"
+    },
+    {
+      "name": "panel_shadow",
+      "value": "#1A000000"
+    },
+    {
+      "name": "message_list_background",
+      "value": "#F5F5F5"
+    },
+    {
       "name": "splash_background",
       "value": "#FFFFFF"
     },

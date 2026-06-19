@@ -4,6 +4,10 @@
     "pages/Chart",
     "pages/CompassPage",
     "pages/Horse",
+    "pages/LoginPage",
+    "pages/KnowledgePage",
+    "pages/KnowledgeDetailPage",
+    "pages/AiChatPage",
     "pages/AppAboutPage"
   ]
 }

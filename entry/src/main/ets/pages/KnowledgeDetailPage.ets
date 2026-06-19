@@ -107,7 +107,7 @@ export struct KnowledgeDetailPage {
         Button({ type: ButtonType.Circle, stateEffect: true }) {
           Text('←')
             .fontSize(20)
-            .fontColor('#666')
+            .fontColor($r('app.color.text_secondary'))
         }
         .width(44)
         .height(44)
@@ -128,10 +128,10 @@ export struct KnowledgeDetailPage {
         Row() {
           Text(this.docSource)
             .fontSize(12)
-            .fontColor('#FFFFFF')
+            .fontColor($r('app.color.primary_action_text'))
             .fontWeight(FontWeight.Medium)
             .padding({ left: 10, right: 10, top: 4, bottom: 4 })
-            .backgroundColor(this.docSource === '内置经典' ? $r('app.color.elegant_blue') : '#E5534B')
+            .backgroundColor(this.docSource === '内置经典' ? $r('app.color.elegant_blue') : $r('app.color.danger'))
             .borderRadius(10)
         }
         .width('100%')
@@ -175,7 +175,7 @@ export struct KnowledgeDetailPage {
                 }
                 .width('100%')
                 .padding(16)
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('app.color.card_background'))
                 .borderRadius(12)
               }
               .width('100%')

@@ -127,8 +127,8 @@ export struct AppAboutPage {
           Row({ space: 12 }) {
             this.featurePill($r('app.media.tab_compass'), '罗盘', $r('app.color.light_blue'))
             this.featurePill($r('app.media.tab_star'), '星盘', $r('app.color.light_blue'))
-            // Offline release: restore the AI feature pill when cloud AI is enabled again.
-            // this.featurePill($r('app.media.tab_ai'), 'AI', $r('app.color.light_blue'))
+            this.featurePill($r('app.media.tab_knowledge'), '知识库', $r('app.color.light_blue'))
+            this.featurePill($r('app.media.tab_ai'), 'AI', $r('app.color.light_blue'))
           }
           .justifyContent(FlexAlign.Center)
           .margin({ top: -18, bottom: 32 })
@@ -150,7 +150,7 @@ export struct AppAboutPage {
               .height(44)
               .fillColor($r('app.color.elegant_blue'))
 
-            Text('清一罗盘是为华人风水爱好者设计的离线罗盘应用，融合传统堪舆智慧与现代技术，提供方位测定与星盘排盘功能。')
+            Text('清一罗盘是为华人风水爱好者设计的罗盘应用，融合传统堪舆智慧与现代技术，提供方位测定、星盘排盘、知识库与 AI 辅助功能。')
               .fontSize(15)
               .fontColor($r('app.color.text_primary'))
               .lineHeight(24)

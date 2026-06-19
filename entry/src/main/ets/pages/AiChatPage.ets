@@ -48,6 +48,7 @@ export struct AiChatPage {
   @Local baseUrlInput: string = '';
   @Local modelInput: string = '';
   @Local ragUrlInput: string = '';
+  @Local ragTokenInput: string = '';
   @Local ragEnabled: boolean = true;
   @Local conversations: Conversation[] = [];
   @Local activeConvId: string = '';
@@ -72,6 +73,7 @@ export struct AiChatPage {
     this.baseUrlInput = await ApiConfigService.getBaseUrl();
     this.modelInput = await ApiConfigService.getModel();
     this.ragUrlInput = await ApiConfigService.getRagUrl();
+    this.ragTokenInput = await ApiConfigService.getRagToken();
     this.ragEnabled = await ApiConfigService.isRagEnabled();
   }
 
@@ -86,6 +88,7 @@ export struct AiChatPage {
     if (this.ragUrlInput.trim().length > 0) {
       await ApiConfigService.saveRagUrl(this.ragUrlInput.trim());
     }
+    await ApiConfigService.saveRagToken(this.ragTokenInput.trim());
     await ApiConfigService.setRagEnabled(this.ragEnabled);
     this.showSettings = false;
   }
@@ -422,9 +425,9 @@ export struct AiChatPage {
       if (msg.role === 'user') {
         Text(msg.content)
           .fontSize(16)
-          .fontColor('#FFFFFF')
+          .fontColor($r('app.color.primary_action_text'))
           .padding({ left: 14, right: 14, top: 10, bottom: 10 })
-          .backgroundColor('#2196F3')
+          .backgroundColor($r('app.color.primary_action'))
           .borderRadius(14)
           .constraintSize({ maxWidth: '75%' })
       } else {
@@ -436,7 +439,7 @@ export struct AiChatPage {
             .copyOption(CopyOptions.InApp)
             .width('100%')
         }
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('app.color.card_background'))
         .borderRadius(14)
         .constraintSize({ maxWidth: '85%' })
         .padding({ left: 40, right: 30, top: 10, bottom: 10 })
@@ -457,7 +460,7 @@ export struct AiChatPage {
         if (this.thoughtContent.length > 0) {
           Text(this.thoughtContent)
             .fontSize(12)
-            .fontColor(Color.Gray)
+            .fontColor($r('app.color.text_secondary'))
             .padding(8)
             .width('100%')
         }
@@ -468,7 +471,7 @@ export struct AiChatPage {
           .copyOption(CopyOptions.InApp)
           .width('100%')
       }
-      .backgroundColor('#FFFFFF')
+      .backgroundColor($r('app.color.card_background'))
       .borderRadius(14)
       .constraintSize({ maxWidth: '85%' })
       .padding({ left: 40, right: 30, top: 10, bottom: 10 })
@@ -494,11 +497,11 @@ export struct AiChatPage {
           Image($r('app.media.icon_close'))
             .width(18)
             .height(18)
-            .fillColor('#999')
+            .fillColor($r('app.color.muted_icon'))
         }
         .width(44)
         .height(44)
-        .backgroundColor('#F0F0F0')
+        .backgroundColor($r('app.color.input_background'))
         .onClick(() => {
           this.showSettings = false;
         })
@@ -512,7 +515,7 @@ export struct AiChatPage {
             .fontColor($r('app.color.text_secondary'))
           Text(' *')
             .fontSize(14)
-            .fontColor('#FF4444')
+            .fontColor($r('app.color.danger'))
         }
 
         TextInput({ text: this.apiKeyInput, placeholder: '请输入你的 DeepSeek API Key' })
@@ -520,7 +523,7 @@ export struct AiChatPage {
           .height(44)
           .fontSize(15)
           .borderRadius(10)
-          .backgroundColor('#F5F5F5')
+          .backgroundColor($r('app.color.input_background'))
           .type(InputType.Password)
           .onChange((value: string) => {
             this.apiKeyInput = value;
@@ -539,7 +542,7 @@ export struct AiChatPage {
           .height(44)
           .fontSize(15)
           .borderRadius(10)
-          .backgroundColor('#F5F5F5')
+          .backgroundColor($r('app.color.input_background'))
           .onChange((value: string) => {
             this.baseUrlInput = value;
           })
@@ -557,7 +560,7 @@ export struct AiChatPage {
           .height(44)
           .fontSize(15)
           .borderRadius(10)
-          .backgroundColor('#F5F5F5')
+          .backgroundColor($r('app.color.input_background'))
           .onChange((value: string) => {
             this.modelInput = value;
           })
@@ -575,9 +578,28 @@ export struct AiChatPage {
           .height(44)
           .fontSize(15)
           .borderRadius(10)
-          .backgroundColor('#F5F5F5')
+          .backgroundColor($r('app.color.input_background'))
           .onChange((value: string) => {
             this.ragUrlInput = value;
+          })
+      }
+      .width('100%')
+      .alignItems(HorizontalAlign.Start)
+
+      Column({ space: 6 }) {
+        Text('RAG Token')
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+
+        TextInput({ text: this.ragTokenInput, placeholder: '请输入 RAG 服务访问 Token' })
+          .width('100%')
+          .height(44)
+          .fontSize(15)
+          .borderRadius(10)
+          .backgroundColor($r('app.color.input_background'))
+          .type(InputType.Password)
+          .onChange((value: string) => {
+            this.ragTokenInput = value;
           })
       }
       .width('100%')
@@ -601,8 +623,8 @@ export struct AiChatPage {
         .width('100%')
         .height(44)
         .fontSize(16)
-        .fontColor('#FFFFFF')
-        .backgroundColor('#2196F3')
+        .fontColor($r('app.color.primary_action_text'))
+        .backgroundColor($r('app.color.primary_action'))
         .borderRadius(10)
         .onClick(() => {
           this.saveConfig();
@@ -631,7 +653,7 @@ export struct AiChatPage {
             .fontSize(14)
             .height(44)
             .layoutWeight(1)
-            .backgroundColor('#F0F0F0')
+            .backgroundColor($r('app.color.input_background'))
             .fontColor($r('app.color.text_primary'))
             .borderRadius(10)
             .onClick(() => {
@@ -642,8 +664,8 @@ export struct AiChatPage {
             .fontSize(14)
             .height(44)
             .layoutWeight(1)
-            .backgroundColor('#E5534B')
-            .fontColor('#FFFFFF')
+            .backgroundColor($r('app.color.danger'))
+            .fontColor($r('app.color.primary_action_text'))
             .borderRadius(10)
             .onClick(() => {
               let id: string = this.deletingConvId;
@@ -655,12 +677,12 @@ export struct AiChatPage {
       }
       .width('100%')
       .padding({ left: 24, right: 24, top: 24, bottom: 20 })
-      .backgroundColor('#FFFFFF')
+      .backgroundColor($r('app.color.card_background'))
       .borderRadius(16)
     }
     .width('80%')
     .constraintSize({ maxWidth: 320 })
-    .shadow({ radius: 24, color: '#1A000000', offsetX: 0, offsetY: 12 })
+    .shadow({ radius: 24, color: $r('app.color.panel_shadow'), offsetX: 0, offsetY: 12 })
   }
 
   @Builder
@@ -745,8 +767,8 @@ export struct AiChatPage {
 
                   Button('删除')
                     .fontSize(12)
-                    .fontColor('#E5534B')
-                    .backgroundColor('#FFF1F0')
+                    .fontColor($r('app.color.danger'))
+                    .backgroundColor($r('app.color.danger_background'))
                     .borderRadius(16)
                     .width(70)
                     .height(32)
@@ -783,7 +805,7 @@ export struct AiChatPage {
               }
               .width('80%')
               .height(0.5)
-              .backgroundColor('#F0F0F0')
+              .backgroundColor($r('app.color.divider'))
             }
           })
         }
@@ -795,7 +817,7 @@ export struct AiChatPage {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFF')
+    .backgroundColor($r('app.color.card_background'))
     .borderRadius({ topRight: 20, bottomRight: 20 })
   }
 
@@ -807,7 +829,7 @@ export struct AiChatPage {
             Image($r('app.media.icon_menu'))
               .width(22)
               .height(22)
-              .fillColor('#666')
+              .fillColor($r('app.color.text_secondary'))
           }
           .width(48)
           .height(48)
@@ -869,18 +891,18 @@ export struct AiChatPage {
                 Text('RAG')
                   .fontSize(11)
                   .fontWeight(FontWeight.Bold)
-                  .fontColor(this.ragEnabled ? '#FFFFFF' : $r('app.color.elegant_blue'))
+                  .fontColor(this.ragEnabled ? $r('app.color.primary_action_text') : $r('app.color.elegant_blue'))
                 Text(this.ragEnabled ? 'ON' : 'OFF')
                   .fontSize(10)
                   .fontWeight(FontWeight.Medium)
-                  .fontColor(this.ragEnabled ? '#EAF3FF' : '#999999')
+                  .fontColor(this.ragEnabled ? $r('app.color.badge_background') : $r('app.color.text_secondary'))
               }
               .alignItems(VerticalAlign.Center)
             }
             .height(30)
             .padding({ left: 10, right: 10 })
-            .backgroundColor(this.ragEnabled ? $r('app.color.elegant_blue') : '#FFFFFF')
-            .border({ width: 1, color: this.ragEnabled ? $r('app.color.elegant_blue') : '#D6E0EA' })
+            .backgroundColor(this.ragEnabled ? $r('app.color.elegant_blue') : $r('app.color.card_background'))
+            .border({ width: 1, color: this.ragEnabled ? $r('app.color.elegant_blue') : $r('app.color.surface_border') })
             .borderRadius(15)
             .onClick(() => {
               this.ragEnabled = !this.ragEnabled;
@@ -890,7 +912,7 @@ export struct AiChatPage {
               Image($r('app.media.icon_settings'))
                 .width(22)
                 .height(22)
-                .fillColor('#666')
+                .fillColor($r('app.color.text_secondary'))
             }
             .width(48)
             .height(48)
@@ -921,7 +943,7 @@ export struct AiChatPage {
         .width('100%')
         .layoutWeight(1)
         .padding({ top: 10 })
-        .backgroundColor('#F5F5F5')
+        .backgroundColor($r('app.color.message_list_background'))
 
         Row({ space: 10 }) {
           TextInput({ text: this.inputText, placeholder: '输入消息...' })
@@ -929,7 +951,7 @@ export struct AiChatPage {
             .height(40)
             .fontSize(16)
             .borderRadius(20)
-            .backgroundColor('#F0F0F0')
+            .backgroundColor($r('app.color.input_background'))
             .onChange((value: string) => {
               this.inputText = value;
             })
@@ -941,8 +963,8 @@ export struct AiChatPage {
             Button('停止')
               .fontSize(14)
               .height(40)
-              .fontColor('#FFFFFF')
-              .backgroundColor('#E5534B')
+              .fontColor($r('app.color.primary_action_text'))
+              .backgroundColor($r('app.color.danger'))
               .borderRadius(20)
               .onClick(() => {
                 this.stopResponse();
@@ -951,8 +973,8 @@ export struct AiChatPage {
             Button('发送')
               .fontSize(14)
               .height(40)
-              .fontColor('#FFFFFF')
-              .backgroundColor('#2196F3')
+              .fontColor($r('app.color.primary_action_text'))
+              .backgroundColor($r('app.color.primary_action'))
               .borderRadius(20)
               .enabled(!this.isLoading && this.inputText.trim().length > 0)
               .onClick(() => {
@@ -962,7 +984,7 @@ export struct AiChatPage {
         }
         .width('100%')
         .padding({ left: 12, right: 12, top: 12, bottom: 56 })
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('app.color.card_background'))
       }
       .backgroundColor($r('app.color.start_window_background'))
       .width('100%')
@@ -987,7 +1009,7 @@ export struct AiChatPage {
         .width('90%')
         .constraintSize({ maxWidth: 400 })
         .padding({ left: 20, right: 20, top: 20, bottom: 30 })
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('app.color.card_background'))
         .borderRadius(20)
         .transition(
           TransitionEffect.asymmetric(

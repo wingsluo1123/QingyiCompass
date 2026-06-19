@@ -19,8 +19,7 @@ import { window } from '@kit.ArkUI';
 import { CompassController } from '../controller/CompassController';
 import { BusinessError } from '@kit.BasicServicesKit';
 import ThemeService from '../service/ThemeService';
-// Offline release: restore KnowledgeSetUp when the knowledge-base feature is enabled again.
-// import KnowledgeSetUp from '../service/KnowledgeSetUp';
+import KnowledgeSetUp from '../service/KnowledgeSetUp';
 
 const DOMAIN = 0x0000;
 
@@ -47,8 +46,7 @@ export default class EntryAbility extends UIAbility {
 
     AppStorage.setOrCreate<common.UIAbilityContext>('Context', this.context);
 
-    // Offline release: local knowledge-base initialization is disabled.
-    // this.initRAGSystem();
+    this.initRAGSystem();
 
     windowStage.loadContent('pages/Horse', (err) => {
       if (err.code) {
@@ -59,32 +57,30 @@ export default class EntryAbility extends UIAbility {
     });
   }
 
-  // Offline release: restore this method when the knowledge-base feature is enabled again.
-  // private async initRAGSystem(): Promise<void> {
-  //   let setUp: KnowledgeSetUp = new KnowledgeSetUp();
-  //   try {
-  //     hilog.info(DOMAIN, 'testTag', 'Starting KnowledgeSetUp initTable');
-  //     await setUp.initTable();
-  //     hilog.info(DOMAIN, 'testTag', 'KnowledgeSetUp initTable done, starting insertData');
-  //     await setUp.insertData();
-  //     AppStorage.setOrCreate<KnowledgeSetUp>('SetUpObject', setUp);
-  //     hilog.info(DOMAIN, 'testTag', 'KnowledgeSetUp completed');
-  //   } catch (err) {
-  //     hilog.error(DOMAIN, 'testTag', 'KnowledgeSetUp failed: %{public}s', JSON.stringify(err));
-  //   }
-  // }
+  private async initRAGSystem(): Promise<void> {
+    let setUp: KnowledgeSetUp = new KnowledgeSetUp();
+    try {
+      hilog.info(DOMAIN, 'testTag', 'Starting KnowledgeSetUp initTable');
+      await setUp.initTable();
+      hilog.info(DOMAIN, 'testTag', 'KnowledgeSetUp initTable done, starting insertData');
+      await setUp.insertData();
+      AppStorage.setOrCreate<KnowledgeSetUp>('SetUpObject', setUp);
+      hilog.info(DOMAIN, 'testTag', 'KnowledgeSetUp completed');
+    } catch (err) {
+      hilog.error(DOMAIN, 'testTag', 'KnowledgeSetUp failed: %{public}s', JSON.stringify(err));
+    }
+  }
 
   onWindowStageDestroy(): void {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
-    // Offline release: no knowledge-base store is opened.
-    // try {
-    //   const setup = AppStorage.get<KnowledgeSetUp>('SetUpObject') as KnowledgeSetUp;
-    //   if (setup) {
-    //     setup.closeStore();
-    //   }
-    // } catch (err) {
-    //   hilog.error(DOMAIN, 'testTag', 'closeStore error: %{public}s', JSON.stringify(err));
-    // }
+    try {
+      const setup = AppStorage.get<KnowledgeSetUp>('SetUpObject') as KnowledgeSetUp;
+      if (setup) {
+        setup.closeStore();
+      }
+    } catch (err) {
+      hilog.error(DOMAIN, 'testTag', 'closeStore error: %{public}s', JSON.stringify(err));
+    }
   }
 
   onForeground(): void {
