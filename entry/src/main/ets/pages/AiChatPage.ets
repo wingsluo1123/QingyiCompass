@@ -1,6 +1,5 @@
 import { Message } from '../service/AiService';
 import { promptAction } from '@kit.ArkUI';
-import { Markdown, EMarkdownMode } from 'fluid-markdown';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import ApiConfigService from '../service/ApiConfigService';
 import ConversationService, { Conversation } from '../service/ConversationService';
@@ -430,7 +429,11 @@ export struct AiChatPage {
           .constraintSize({ maxWidth: '75%' })
       } else {
         Column() {
-          Markdown({ content: msg.content, mode: EMarkdownMode.Normal })
+          Text(msg.content)
+            .fontSize(15)
+            .fontColor($r('app.color.text_primary'))
+            .lineHeight(23)
+            .copyOption(CopyOptions.InApp)
             .width('100%')
         }
         .backgroundColor('#FFFFFF')
@@ -458,7 +461,11 @@ export struct AiChatPage {
             .padding(8)
             .width('100%')
         }
-        Markdown({ content: this.streamingContent, mode: EMarkdownMode.Normal })
+        Text(this.streamingContent)
+          .fontSize(15)
+          .fontColor($r('app.color.text_primary'))
+          .lineHeight(23)
+          .copyOption(CopyOptions.InApp)
           .width('100%')
       }
       .backgroundColor('#FFFFFF')

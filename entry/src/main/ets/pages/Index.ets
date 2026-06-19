@@ -2,7 +2,8 @@ import { CompassPage } from "./CompassPage"
 import { ChartEntry } from "./Chart"
 import { About } from "./About"
 // Offline release: restore this import when the knowledge-base feature is enabled again.
-// import { KnowledgePage } from "./KnowledgePage"
+import { KnowledgePage } from "./KnowledgePage"
+import { AiChatPage } from "./AiChatPage"
 import { HdsTabs, hdsMaterial } from '@kit.UIDesignKit';
 
 @Component
@@ -59,15 +60,15 @@ struct Index {
         .tabBar(this.tabBuilder('星盘', 1))
 
         // Offline release: restore this tab when the knowledge-base feature is enabled again.
-        // TabContent() {
-        //   KnowledgePage()
-        // }
-        // .tabBar(this.tabBuilder('知识库', 2))
+        TabContent() {
+          KnowledgePage()
+        }
+        .tabBar(this.tabBuilder('知识库', 2))
 
-        // TabContent() {
-        //   AiChatPage()
-        // }
-        // .tabBar(this.tabBuilder('AI', 3))
+        TabContent() {
+          AiChatPage()
+        }
+        .tabBar(this.tabBuilder('AI', 3))
 
         TabContent() {
           About()
