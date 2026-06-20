@@ -259,33 +259,33 @@ export struct About {
             .color($r('app.color.divider'))
             .margin({ left: 20, right: 20 })
 
-          Row() {
-            Column({ space: 5 }) {
-              Text(this.authIsLoggedIn ? '个人知识库已启用' : '解锁个人知识库')
-                .fontSize(17)
-                .fontWeight(FontWeight.Bold)
-                .fontColor($r('app.color.text_primary'))
-              Text(this.accountHint)
-                .fontSize(13)
-                .fontColor($r('app.color.text_secondary'))
-            }
-            .alignItems(HorizontalAlign.Start)
-            .layoutWeight(1)
-
-            Button(this.authIsLoggedIn ? '管理' : '登录')
-              .height(38)
-              .padding({ left: 18, right: 18 })
-              .fontSize(15)
-              .fontWeight(FontWeight.Medium)
-              .fontColor($r('app.color.primary_action_text'))
-              .backgroundColor($r('app.color.elegant_blue'))
-              .borderRadius(19)
-              .onClick(() => {
-                this.navigateTo('pages/LoginPage');
-              })
-          }
-          .width('100%')
-          .padding({ left: 20, right: 20, top: 18, bottom: 20 })
+          // Row() {
+          //   Column({ space: 5 }) {
+          //     Text(this.authIsLoggedIn ? '个人知识库已启用' : '解锁个人知识库')
+          //       .fontSize(17)
+          //       .fontWeight(FontWeight.Bold)
+          //       .fontColor($r('app.color.text_primary'))
+          //     Text(this.accountHint)
+          //       .fontSize(13)
+          //       .fontColor($r('app.color.text_secondary'))
+          //   }
+          //   .alignItems(HorizontalAlign.Start)
+          //   .layoutWeight(1)
+          //
+          //   Button(this.authIsLoggedIn ? '管理' : '登录')
+          //     .height(38)
+          //     .padding({ left: 18, right: 18 })
+          //     .fontSize(15)
+          //     .fontWeight(FontWeight.Medium)
+          //     .fontColor($r('app.color.primary_action_text'))
+          //     .backgroundColor($r('app.color.elegant_blue'))
+          //     .borderRadius(19)
+          //     .onClick(() => {
+          //       this.navigateTo('pages/LoginPage');
+          //     })
+          // }
+          // .width('100%')
+          // .padding({ left: 20, right: 20, top: 18, bottom: 20 })
         }
         .width('100%')
         .backgroundColor($r('app.color.card_background'))
