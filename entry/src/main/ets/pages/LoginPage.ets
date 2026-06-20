@@ -65,7 +65,7 @@ export struct LoginPage {
       await this.refreshSession();
       promptAction.showToast({ message: '登录成功', duration: 1500 });
     } catch (err) {
-      promptAction.showToast({ message: '登录状态保存失败', duration: 1800 });
+      promptAction.showToast({ message: '后端登录失败，请检查 RAG Token 和服务地址', duration: 2200 });
     } finally {
       this.isLoading = false;
     }

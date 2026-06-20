@@ -228,6 +228,10 @@ export struct KnowledgePage {
       let ragToken: string = await ApiConfigService.getRagToken();
       await AuthService.init(this.context);
       let appSessionToken: string = await AuthService.getAppSessionToken();
+      if (appSessionToken.length === 0) {
+        promptAction.showToast({ message: '请先在“我的”页面重新登录账号', duration: 2200 });
+        return;
+      }
       let httpRequest = http.createHttp();
       let response = await httpRequest.request(
         ragUrl + '/v1/rag/upload/text',

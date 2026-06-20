@@ -96,12 +96,7 @@ export class AuthService {
   }
 
   async signInWithHuawei(credential: HuaweiAuthCredential, profile?: HuaweiUserProfile): Promise<HuaweiUserSession> {
-    let loginResponse: HuaweiLoginResponse | null = null;
-    try {
-      loginResponse = await this.exchangeHuaweiCredential(credential);
-    } catch (err) {
-      loginResponse = null;
-    }
+    let loginResponse: HuaweiLoginResponse = await this.exchangeHuaweiCredential(credential);
 
     let session: HuaweiUserSession = {
       provider: 'huawei',
@@ -110,8 +105,8 @@ export class AuthService {
       idToken: credential.idToken,
       nickName: profile?.nickName ?? '',
       avatarUri: profile?.avatarUri ?? '',
-      appSessionToken: loginResponse?.session_token ?? '',
-      accountLevel: loginResponse?.level ?? 1,
+      appSessionToken: loginResponse.session_token,
+      accountLevel: loginResponse.level,
       loggedInAt: Date.now()
     };
 
