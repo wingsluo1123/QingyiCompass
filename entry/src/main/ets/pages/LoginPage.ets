@@ -15,6 +15,9 @@ export struct LoginPage {
   @State private accountLevel: number = 0;
   @State private hasServerSession: boolean = false;
   @State private isLoading: boolean = false;
+  @State private customerAccountInput: string = '';
+  @State private customerCodeInput: string = '';
+  @State private isCustomerLoginLoading: boolean = false;
 
   private controller: loginComponentManager.LoginWithHuaweiIDButtonController =
     new loginComponentManager.LoginWithHuaweiIDButtonController()
@@ -68,6 +71,31 @@ export struct LoginPage {
       promptAction.showToast({ message: '后端登录失败，请检查 RAG Token 和服务地址', duration: 2200 });
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  private async handleCustomerLogin(): Promise<void> {
+    if (this.isCustomerLoginLoading) {
+      return;
+    }
+
+    let accountID: string = this.customerAccountInput.trim();
+    let accessCode: string = this.customerCodeInput.trim();
+    if (accountID.length === 0 || accessCode.length === 0) {
+      promptAction.showToast({ message: '请输入客户账号和访问码', duration: 1800 });
+      return;
+    }
+
+    this.isCustomerLoginLoading = true;
+    try {
+      await AuthService.signInWithCustomer(accountID, accessCode);
+      this.customerCodeInput = '';
+      await this.refreshSession();
+      promptAction.showToast({ message: '客户账号登录成功', duration: 1500 });
+    } catch (err) {
+      promptAction.showToast({ message: '客户账号登录失败，请检查账号、访问码、RAG Token 和服务地址', duration: 2400 });
+    } finally {
+      this.isCustomerLoginLoading = false;
     }
   }
 
@@ -287,13 +315,62 @@ export struct LoginPage {
                   style: loginComponentManager.Style.BUTTON_RED,
                   borderRadius: 8,
                   loginType: loginComponentManager.LoginType.ID,
-                  supportDarkMode: true,
-                  verifyPhoneNumber: true
+                  supportDarkMode: true
                 },
                 controller: this.controller
               })
                 .width('100%')
                 .height(48)
+
+              Divider()
+                .color($r('app.color.divider'))
+                .margin({ top: 4, bottom: 4 })
+
+              Text('客户专用通道')
+                .fontSize(15)
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.text_primary'))
+                .width('100%')
+
+              TextInput({ text: this.customerAccountInput, placeholder: '客户账号' })
+                .width('100%')
+                .height(44)
+                .fontSize(14)
+                .fontColor($r('app.color.text_primary'))
+                .backgroundColor($r('app.color.input_background'))
+                .borderRadius(8)
+                .padding({ left: 12, right: 12 })
+                .enabled(!this.isCustomerLoginLoading)
+                .onChange((value: string) => {
+                  this.customerAccountInput = value;
+                })
+
+              TextInput({ text: this.customerCodeInput, placeholder: '访问码' })
+                .width('100%')
+                .height(44)
+                .fontSize(14)
+                .fontColor($r('app.color.text_primary'))
+                .backgroundColor($r('app.color.input_background'))
+                .borderRadius(8)
+                .padding({ left: 12, right: 12 })
+                .type(InputType.Password)
+                .enabled(!this.isCustomerLoginLoading)
+                .onChange((value: string) => {
+                  this.customerCodeInput = value;
+                })
+
+              Button(this.isCustomerLoginLoading ? '登录中...' : '客户账号登录')
+                .width('100%')
+                .height(46)
+                .fontSize(15)
+                .fontWeight(FontWeight.Medium)
+                .fontColor($r('app.color.primary_action_text'))
+                .backgroundColor($r('app.color.primary_action'))
+                .borderRadius(8)
+                .enabled(!this.isCustomerLoginLoading)
+                .onClick(() => {
+                  this.handleCustomerLogin();
+                })
 
               Text(this.isLoading ? '正在建立登录状态...' : '登录仅用于识别用户身份，不会在 App 端展示你的华为账号敏感信息。')
                 .fontSize(12)

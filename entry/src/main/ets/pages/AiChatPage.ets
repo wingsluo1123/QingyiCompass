@@ -10,6 +10,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { util } from '@kit.ArkTS';
 import { EventSource, EventSourceEvent } from '../service/EventSourceUtil';
 import AuthService from '../service/AuthService';
+import { Markdown, EMarkdownMode } from 'fluid-markdown';
 
 interface StreamDelta {
   role: string;
@@ -31,6 +32,15 @@ interface ChatRequestBody {
   max_tokens: number;
   temperature: number;
   stream: boolean;
+}
+
+interface RagDocumentSummary {
+  id: string;
+  name: string;
+  source: string;
+  category: string;
+  visibility: string;
+  chunk_count: number;
 }
 
 @Entry
@@ -205,8 +215,12 @@ export struct AiChatPage {
     let ragUrl: string = await ApiConfigService.getRagUrl();
     let ragToken: string = await ApiConfigService.getRagToken();
     await AuthService.init(this.context);
-    let appSessionToken: string = await AuthService.getAppSessionToken();
+    let appSessionToken: string = await AuthService.getOrCreateAppSessionToken();
     let fetchUrl: string = ragUrl + '/v1/rag/search';
+    let catalogContext: string = await this.fetchRagDocumentCatalog(ragUrl, ragToken, appSessionToken);
+    if (this.isRagCatalogQuestion(queryText) && catalogContext.length > 0) {
+      return this.buildCatalogOnlyMessages(catalogContext);
+    }
 
     try {
       let httpRequest = http.createHttp();
@@ -220,7 +234,7 @@ export struct AiChatPage {
             'X-App-Session': appSessionToken,
             'User-Agent': 'Compass/1.0 HarmonyOS'
           },
-          extraData: JSON.stringify({ query: queryText, top_k: 3 }),
+          extraData: JSON.stringify({ query: queryText, top_k: 8 }),
           connectTimeout: 5000,
           readTimeout: 10000
         }
@@ -243,9 +257,11 @@ export struct AiChatPage {
 
           let systemPrompt: string =
             '你是一位深谙中国传统堪舆之术的风水顾问，精通八宅明镜、地理五诀等经典。回答风格严谨，引经据典。\n\n' +
+            catalogContext +
             '以下是知识库中与用户问题相关的经典原文，请基于这些原文回答问题：\n\n' +
             contextStr +
             '【回答要求】\n' +
+            '0. 如果用户询问知识库中有哪些文件、文档或资料，必须优先依据“当前可见知识库文档目录”完整列出，不要只列检索片段来源\n' +
             '1. 先引用相关的经典原文片段，再用白话解释\n' +
             '2. 如果原文不足以完全回答，请如实说明\n' +
             '3. 标注引用来源\n' +
@@ -269,8 +285,116 @@ export struct AiChatPage {
         JSON.stringify(e));
     }
 
+    if (catalogContext.length > 0) {
+      let systemPrompt: string =
+        '你是一位深谙中国传统堪舆之术的风水顾问，精通八宅明镜、地理五诀等经典。回答风格严谨，引经据典。\n\n' +
+        catalogContext +
+        '【回答要求】\n' +
+        '1. 如果用户询问知识库中有哪些文件、文档或资料，必须完整列出“当前可见知识库文档目录”中的全部项目\n' +
+        '2. 如果用户询问具体内容，但没有检索到相关片段，请说明当前只获取到了文档目录，不能编造正文内容';
+      return [
+        { role: 'system', content: systemPrompt },
+        ...this.chatHistory
+      ];
+    }
+
     // Fallback: no RAG context, send as-is
     return [...this.chatHistory];
+  }
+
+  private isRagCatalogQuestion(queryText: string): boolean {
+    let q: string = queryText.trim();
+    if (q.length === 0) {
+      return false;
+    }
+
+    let asksForList: boolean =
+      q.indexOf('有哪些') >= 0 ||
+      q.indexOf('有什么') >= 0 ||
+      q.indexOf('有多少') >= 0 ||
+      q.indexOf('多少个') >= 0 ||
+      q.indexOf('列出') >= 0 ||
+      q.indexOf('列举') >= 0 ||
+      q.indexOf('全部') >= 0 ||
+      q.indexOf('所有') >= 0 ||
+      q.indexOf('目录') >= 0 ||
+      q.indexOf('清单') >= 0 ||
+      q.indexOf('列表') >= 0;
+
+    let asksAboutDocs: boolean =
+      q.indexOf('知识库') >= 0 ||
+      q.indexOf('文件') >= 0 ||
+      q.indexOf('文档') >= 0 ||
+      q.indexOf('资料') >= 0 ||
+      q.indexOf('书') >= 0 ||
+      q.indexOf('经典') >= 0;
+
+    return asksForList && asksAboutDocs;
+  }
+
+  private buildCatalogOnlyMessages(catalogContext: string): Message[] {
+    let systemPrompt: string =
+      '你是一位深谙中国传统堪舆之术的风水顾问，精通八宅明镜、地理五诀等经典。回答风格严谨，引经据典。\n\n' +
+      catalogContext +
+      '【回答要求】\n' +
+      '1. 用户正在询问知识库文档目录，必须完整列出“当前可见知识库文档目录”中的全部项目\n' +
+      '2. 不要使用片段检索结果推断目录，因为目录已经由系统完整提供\n' +
+      '3. 可以简短说明这些目录已经按当前登录用户权限过滤\n' +
+      '4. 不要编造目录中不存在的文件';
+    return [
+      { role: 'system', content: systemPrompt },
+      ...this.chatHistory
+    ];
+  }
+
+  private async fetchRagDocumentCatalog(ragUrl: string, ragToken: string, appSessionToken: string): Promise<string> {
+    try {
+      let httpRequest = http.createHttp();
+      let response = await httpRequest.request(
+        ragUrl + '/v1/rag/documents',
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            'Authorization': 'Bearer ' + ragToken,
+            'X-App-Session': appSessionToken,
+            'User-Agent': 'Compass/1.0 HarmonyOS'
+          },
+          connectTimeout: 5000,
+          readTimeout: 10000
+        }
+      );
+      httpRequest.destroy();
+
+      if (response.responseCode !== 200) {
+        hilog.warn(0x0001, 'AiChatPage', 'RAG catalog returned %{public}d', response.responseCode);
+        return '';
+      }
+
+      let body: Record<string, object> = JSON.parse(response.result as string) as Record<string, object>;
+      let documents: RagDocumentSummary[] = (body['documents'] as RagDocumentSummary[]) || [];
+      if (documents.length === 0) {
+        return '';
+      }
+
+      let catalog: string = '【当前可见知识库文档目录】\n';
+      catalog += '以下目录已经按当前登录用户权限过滤，包含内置公开文档和当前用户自己的私有文档：\n';
+      for (let i = 0; i < documents.length; i++) {
+        let doc: RagDocumentSummary = documents[i];
+        let name: string = doc.name || '未命名文档';
+        let source: string = doc.source || '未知来源';
+        let category: string = doc.category || '未分类';
+        let chunkCount: number = doc.chunk_count || 0;
+        catalog += (i + 1).toString() + '. ' + name +
+          '（来源：' + source +
+          '，分类：' + category +
+          '，片段数：' + chunkCount.toString() + '）\n';
+      }
+      catalog += '\n';
+      return catalog;
+    } catch (e) {
+      hilog.warn(0x0001, 'AiChatPage', 'RAG catalog fetch failed: %{public}s', JSON.stringify(e));
+      return '';
+    }
   }
 
   private async callLLM(messages: Message[]): Promise<void> {
@@ -416,6 +540,17 @@ export struct AiChatPage {
   }
 
   @Builder
+  markdownContent(content: string) {
+    Markdown({
+      content: content.length > 0 ? content : ' ',
+      mode: EMarkdownMode.Normal,
+      onMarkdownAreaChange: () => {},
+      onMarkdownNodeClick: data => {},
+    })
+      .width('100%')
+  }
+
+  @Builder
   messageBubble(msg: Message) {
     Row() {
       if (msg.role === 'user') {
@@ -432,13 +567,9 @@ export struct AiChatPage {
           .constraintSize({ maxWidth: '75%' })
       } else {
         Column() {
-          Text(msg.content)
-            .fontSize(15)
-            .fontColor($r('app.color.text_primary'))
-            .lineHeight(23)
-            .copyOption(CopyOptions.InApp)
-            .width('100%')
+          this.markdownContent(msg.content)
         }
+        .width('100%')
         .backgroundColor($r('app.color.card_background'))
         .borderRadius(14)
         .constraintSize({ maxWidth: '85%' })
@@ -464,13 +595,9 @@ export struct AiChatPage {
             .padding(8)
             .width('100%')
         }
-        Text(this.streamingContent)
-          .fontSize(15)
-          .fontColor($r('app.color.text_primary'))
-          .lineHeight(23)
-          .copyOption(CopyOptions.InApp)
-          .width('100%')
+        this.markdownContent(this.streamingContent)
       }
+      .width('100%')
       .backgroundColor($r('app.color.card_background'))
       .borderRadius(14)
       .constraintSize({ maxWidth: '85%' })

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 import hashlib
 import hmac
@@ -69,6 +70,7 @@ class AppUser:
     union_id: str
     open_id: str
     level: int
+    provider: str = "huawei"
 
     @property
     def is_admin(self) -> bool:
@@ -88,6 +90,15 @@ class HuaweiLoginResponse(BaseModel):
     open_id: str
     level: int
     expires_in: int
+
+
+class GuestLoginRequest(BaseModel):
+    guest_id: str = Field(min_length=8, max_length=80)
+
+
+class CustomerLoginRequest(BaseModel):
+    account_id: str = Field(min_length=1, max_length=80)
+    access_code: str = Field(min_length=1, max_length=128)
 
 # ============================================================
 # Application lifecycle
@@ -207,10 +218,10 @@ def _resolve_account_level(union_id: str, open_id: str) -> int:
     return config.DEFAULT_ACCOUNT_LEVEL
 
 
-def _sign_app_session(union_id: str, open_id: str, level: int) -> str:
+def _sign_app_session(union_id: str, open_id: str, level: int, provider: str = "huawei") -> str:
     expires_at = int(time.time()) + config.APP_SESSION_TTL_SECONDS
     payload = json.dumps(
-        {"provider": "huawei", "union_id": union_id, "open_id": open_id, "level": level, "exp": expires_at},
+        {"provider": provider, "union_id": union_id, "open_id": open_id, "level": level, "exp": expires_at},
         ensure_ascii=False,
         separators=(",", ":"),
     ).encode("utf-8")
@@ -255,6 +266,7 @@ def _verify_app_session_token(token: str) -> AppUser:
         union_id=union_id,
         open_id=open_id,
         level=int(payload.get("level", config.DEFAULT_ACCOUNT_LEVEL)),
+        provider=str(payload.get("provider", "huawei")),
     )
 
 
@@ -307,6 +319,20 @@ def _verify_huawei_authorization_code(authorization_code: str) -> None:
         raise HTTPException(status_code=401, detail="Huawei authorization failed") from exc
 
 
+def _normalize_guest_id(guest_id: str) -> str:
+    value = guest_id.strip()
+    if not re.fullmatch(r"[A-Za-z0-9._:-]{8,80}", value):
+        raise HTTPException(status_code=400, detail="Invalid guest_id")
+    return value
+
+
+def _normalize_customer_account_id(account_id: str) -> str:
+    value = account_id.strip()
+    if not re.fullmatch(r"[A-Za-z0-9._-]{1,80}", value):
+        raise HTTPException(status_code=400, detail="Invalid account_id")
+    return value
+
+
 @app.post("/v1/auth/huawei/login", response_model=HuaweiLoginResponse)
 async def login_with_huawei(request: HuaweiLoginRequest):
     """Create an app session from Huawei Account Kit identity."""
@@ -317,6 +343,48 @@ async def login_with_huawei(request: HuaweiLoginRequest):
         session_token=session_token,
         union_id=request.union_id,
         open_id=request.open_id,
+        level=level,
+        expires_in=config.APP_SESSION_TTL_SECONDS,
+    )
+
+
+@app.post("/v1/auth/customer/login", response_model=HuaweiLoginResponse)
+async def login_as_customer(request: CustomerLoginRequest):
+    """Create an app session for a server-configured customer account."""
+    if not config.CUSTOMER_LOGIN_ENABLED:
+        raise HTTPException(status_code=403, detail="Customer login disabled")
+
+    account_id = _normalize_customer_account_id(request.account_id)
+    access_code = request.access_code.strip()
+    account = config.CUSTOMER_ACCOUNTS.get(account_id)
+    if account is None or not hmac.compare_digest(account.access_code, access_code):
+        raise HTTPException(status_code=401, detail="Invalid customer account")
+
+    identity = f"customer:{account.account_id}"
+    session_token = _sign_app_session(identity, identity, account.level, provider="customer")
+    return HuaweiLoginResponse(
+        session_token=session_token,
+        union_id=identity,
+        open_id=identity,
+        level=account.level,
+        expires_in=config.APP_SESSION_TTL_SECONDS,
+    )
+
+
+@app.post("/v1/auth/guest/login", response_model=HuaweiLoginResponse)
+async def login_as_guest(request: GuestLoginRequest):
+    """Create an app session for a local device guest identity."""
+    if not config.GUEST_LOGIN_ENABLED:
+        raise HTTPException(status_code=403, detail="Guest login disabled")
+
+    guest_id = _normalize_guest_id(request.guest_id)
+    identity = f"guest:{guest_id}"
+    level = config.DEFAULT_ACCOUNT_LEVEL
+    session_token = _sign_app_session(identity, identity, level, provider="guest")
+    return HuaweiLoginResponse(
+        session_token=session_token,
+        union_id=identity,
+        open_id=identity,
         level=level,
         expires_in=config.APP_SESSION_TTL_SECONDS,
     )

@@ -6,8 +6,7 @@
       "default"
     ],
     "requestPermissions": [
-      // Offline release: restore INTERNET when remote Markdown images are enabled again.
-      // { "name": "ohos.permission.INTERNET" }
+      { "name": "ohos.permission.INTERNET" }
     ]
   }
 }

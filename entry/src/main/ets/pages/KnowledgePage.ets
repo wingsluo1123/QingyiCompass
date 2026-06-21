@@ -93,7 +93,7 @@ export struct KnowledgePage {
       let ragUrl: string = await ApiConfigService.getRagUrl();
       let ragToken: string = await ApiConfigService.getRagToken();
       await AuthService.init(this.context);
-      let appSessionToken: string = await AuthService.getAppSessionToken();
+      let appSessionToken: string = await AuthService.getOrCreateAppSessionToken();
       if (ragUrl.trim().length === 0) {
         this.lastSyncError = 'RAG URL empty';
         return false;
@@ -227,9 +227,9 @@ export struct KnowledgePage {
       let ragUrl: string = await ApiConfigService.getRagUrl();
       let ragToken: string = await ApiConfigService.getRagToken();
       await AuthService.init(this.context);
-      let appSessionToken: string = await AuthService.getAppSessionToken();
+      let appSessionToken: string = await AuthService.getOrCreateAppSessionToken();
       if (appSessionToken.length === 0) {
-        promptAction.showToast({ message: '请先在“我的”页面重新登录账号', duration: 2200 });
+        promptAction.showToast({ message: '无法建立访客通道，请检查 RAG Token 和服务地址', duration: 2200 });
         return;
       }
       let httpRequest = http.createHttp();
@@ -305,7 +305,7 @@ export struct KnowledgePage {
     let ragUrl: string = await ApiConfigService.getRagUrl();
     let ragToken: string = await ApiConfigService.getRagToken();
     await AuthService.init(this.context);
-    let appSessionToken: string = await AuthService.getAppSessionToken();
+    let appSessionToken: string = await AuthService.getOrCreateAppSessionToken();
     let httpRequest = http.createHttp();
     let response = await httpRequest.request(
       ragUrl + '/v1/rag/documents/' + doc.id + '/chunks',

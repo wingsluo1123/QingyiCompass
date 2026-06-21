@@ -69,7 +69,7 @@ export struct KnowledgeDetailPage {
     let ragUrl: string = await ApiConfigService.getRagUrl();
     let ragToken: string = await ApiConfigService.getRagToken();
     await AuthService.init(this.context);
-    let appSessionToken: string = await AuthService.getAppSessionToken();
+    let appSessionToken: string = await AuthService.getOrCreateAppSessionToken();
     let httpRequest = http.createHttp();
     let response = await httpRequest.request(
       ragUrl + '/v1/rag/documents/' + this.docId + '/chunks',

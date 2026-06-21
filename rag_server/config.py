@@ -7,6 +7,7 @@ Compass RAG Server — 全局配置
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 # ============================================================
@@ -95,6 +96,39 @@ HUAWEI_VERIFY_AUTH_CODE: bool = os.getenv("HUAWEI_VERIFY_AUTH_CODE", "false").lo
 APP_SESSION_SECRET: str = os.getenv("APP_SESSION_SECRET", RAG_AUTH_TOKEN or "compass-local-session-secret")
 APP_SESSION_TTL_SECONDS: int = int(os.getenv("APP_SESSION_TTL_SECONDS", str(60 * 60 * 24 * 30)))
 DEFAULT_ACCOUNT_LEVEL: int = int(os.getenv("DEFAULT_ACCOUNT_LEVEL", "1"))
+GUEST_LOGIN_ENABLED: bool = os.getenv("GUEST_LOGIN_ENABLED", "true").lower() == "true"
+CUSTOMER_LOGIN_ENABLED: bool = os.getenv("CUSTOMER_LOGIN_ENABLED", "true").lower() == "true"
+
+
+@dataclass(frozen=True)
+class CustomerAccount:
+    account_id: str
+    access_code: str
+    level: int
+
+
+def _parse_customer_accounts(raw: str) -> dict[str, CustomerAccount]:
+    accounts: dict[str, CustomerAccount] = {}
+    for item in raw.split(","):
+        pair = item.strip()
+        if not pair or "=" not in pair:
+            continue
+        account_id, access_code = pair.split("=", 1)
+        account_id = account_id.strip()
+        access_code = access_code.strip()
+        if not account_id or not access_code:
+            continue
+        accounts[account_id] = CustomerAccount(
+            account_id=account_id,
+            access_code=access_code,
+            level=DEFAULT_ACCOUNT_LEVEL,
+        )
+    return accounts
+
+
+CUSTOMER_ACCOUNTS: dict[str, CustomerAccount] = _parse_customer_accounts(
+    os.getenv("CUSTOMER_ACCOUNTS", "")
+)
 LEVEL3_UNION_IDS: set[str] = {
     item.strip() for item in os.getenv("LEVEL3_UNION_IDS", "").split(",") if item.strip()
 }
