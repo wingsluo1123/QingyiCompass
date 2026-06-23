@@ -1,97 +1,253 @@
-# 清一罗盘
+# Qingyi Compass
 
-## 简介
+Qingyi Compass is a HarmonyOS compass application with traditional compass tools, Zi Wei chart views, an AI chat assistant, and an optional RAG knowledge-base backend.
 
-清一罗盘是一款基于 HarmonyOS 的传统堪舆罗盘应用，集成了电子罗盘、紫微星盘与 AI 智能助手，帮助风水爱好者与从业者快速获取方位、星盘数据。
+The current codebase is the backend-enabled version. It supports Huawei Account Kit login, server-configured customer accounts, guest sessions, user-separated document uploads, and Markdown-rendered AI responses.
 
-## 环境要求
+## Requirements
 
-- HarmonyOS API 6.0.0 Release（API 20）及以上
-- DevEco Studio 6.0.0 Release 及以上
+- HarmonyOS API 6.1.0 (API 23) or later
+- DevEco Studio compatible with HarmonyOS API 23
+- Python 3.10+ for the optional RAG backend
 
-## 功能模块
+## Main Features
 
-### 🧭 罗盘
+- Digital compass with custom Canvas rendering and sensor-driven direction updates
+- Zi Wei chart pages and related calculation views
+- AI chat with configurable chat-completion endpoint, model, and API key
+- Markdown response rendering through the local `fluid-markdown` HAR module
+- Dark mode support with persisted user preference
+- Knowledge-base page for listing, viewing, and uploading user documents
+- RAG retrieval over built-in knowledge and user-uploaded private documents
+- Account page with Huawei login and a customer-account login channel
 
-- 实时传感器采集方向数据，指针始终指向正北
-- 显示当前坐向（二十四山定向：八宫配二十四山）
-- 洛书数理计算：根据年份与向方自动推导洛书九宫
-- 自定义度数输入，快速查看指定方向
-- 方向信息弹窗（坤山艮向、子山午向等详解）
+## Architecture
 
-### ⭐ 星盘
+The app has two major parts:
 
-- 紫微斗数星盘展示：显示紫微、天府十二星分布
-- 四化（化禄、化权、化科、化忌）天干地支推算
-- 命宫定位与科名星（台辅、封诰、文昌、文曲等）展示
-- 流年、流月输入分析
-- 火星、铃星、左右辅星等辅星计算
+- `entry/`: HarmonyOS application module
+- `rag_server/`: optional Python FastAPI backend for RAG retrieval and document indexing
 
-### 🤖 AI 助手
+The RAG backend uses:
 
-- 基于 DeepSeek API 的智能对话
-- 支持多轮对话，完整保留上下文
-- 气泡式聊天界面，用户消息与 AI 回复左右分区
+- FastAPI for HTTP APIs
+- ChromaDB for local vector persistence
+- `sentence-transformers` for embeddings
+- `rank-bm25` for lexical retrieval
+- SSE for streaming RAG retrieval events
 
-### 📖 关于
+The backend does not use MySQL. Uploaded document chunks and metadata are persisted under:
 
-- 应用信息与使用说明
-
-## 技术特性
-
-- **沉浸光感**：底部页签栏适配华为 HDS 沉浸光感效果，根据设备算力自适应材质级别
-- **传感器融合**：融合方向传感器、磁力传感器、气压传感器、GPS 定位
-- **自定义 Canvas 绘制**：罗盘与星盘均使用 Canvas 自绘，支持多层同心圆叠加与动态旋转
-- **响应式布局**：界面适配不同屏幕比例，避免固定像素导致的组件重叠
-- **AI 集成**：通过 `@kit.NetworkKit` 直接调用 DeepSeek API，无额外后端服务
-
-## 工程目录
-
-```
-entry/src/main/ets/
-├─ common/
-│  ├─ CompassConstants.ets       // 八卦、天干地支、洛书等常量
-│  ├─ Constants.ets              // 通用常量
-│  └─ Logger.ets                 // 日志工具类
-├─ component/
-│  ├─ CompassView.ets            // 罗盘自定义 Canvas 组件
-│  ├─ ChartView.ets              // 星盘自定义 Canvas 组件
-│  └─ DirectionInfoDialog.ets    // 方向信息弹窗
-├─ controller/
-│  └─ CompassController.ets      // 传感器控制器
-├─ model/
-│  ├─ DirectionInfo.ets          // 方向信息数据模型
-│  └─ KeMing.ets                 // 科名星数据模型
-├─ pages/
-│  ├─ Index.ets                  // 主入口（HdsTabs 页签导航）
-│  ├─ CompassPage.ets            // 罗盘页面
-│  ├─ Chart.ets                  // 星盘页面
-│  ├─ AiChatPage.ets             // AI 对话页面
-│  ├─ About.ets                  // 关于页面
-│  └─ Horse.ets                  // 附加页面
-├─ service/
-│  └─ AiService.ets              // AI API 网络请求层
-└─ entryability/
-   └─ EntryAbility.ets
+```text
+rag_server/chroma_data/
 ```
 
-## 权限说明
+## Project Layout
 
-| 权限 | 用途 |
-|------|------|
-| `ohos.permission.INTERNET` | AI 对话网络请求 |
-| `ohos.permission.APPROXIMATELY_LOCATION` | 获取设备大致位置 |
-| `ohos.permission.LOCATION` | 获取设备精确经纬度 |
+```text
+AppScope/
+entry/
+  src/main/ets/
+    common/
+    component/
+    controller/
+    model/
+    pages/
+      Index.ets
+      CompassPage.ets
+      Chart.ets
+      AiChatPage.ets
+      KnowledgePage.ets
+      KnowledgeDetailPage.ets
+      LoginPage.ets
+      About.ets
+    service/
+      ApiConfigService.ets
+      AuthService.ets
+      AiService.ets
+      RAGService.ets
+      KnowledgeService.ets
+      ThemeService.ets
+markdown/
+rag_server/
+  main.py
+  config.py
+  knowledge/
+  retrieval/
+  models/
+```
 
-## AI 功能配置
+## App Configuration
 
-1. 申请 [DeepSeek API Key](https://platform.deepseek.com/api_keys)
-2. 在 `entry/src/main/ets/service/AiService.ets` 中替换 `API_KEY` 常量
-3. 编译运行，点击底部「🤖 AI」页签即可使用
+The AI settings are configured at runtime in the app:
 
-## 参考文档
+- Chat API key
+- Chat completion base URL
+- Model name
+- RAG backend URL
+- RAG service token
+- RAG enabled/disabled switch
 
-- [@ohos.sensor（传感器）](https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-sensor)
-- [@ohos.geoLocationManager（位置服务）](https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-geolocationmanager)
-- [HDS 沉浸光感](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/ui-design-hds-component-material)
-- [DeepSeek API 文档](https://api-docs.deepseek.com/zh-cn/)
+Defaults are defined in:
+
+```text
+entry/src/main/ets/service/ApiConfigService.ets
+```
+
+The app requires network access:
+
+```text
+ohos.permission.INTERNET
+```
+
+## RAG Backend Setup
+
+Install backend dependencies:
+
+```powershell
+pip install -r rag_server/requirements.txt
+```
+
+Create a local backend environment file:
+
+```text
+rag_server/.env.local
+```
+
+Example:
+
+```env
+RAG_AUTH_TOKEN=replace-with-a-strong-service-token
+APP_SESSION_SECRET=replace-with-a-strong-session-secret
+CUSTOMER_LOGIN_ENABLED=true
+CUSTOMER_ACCOUNTS=client_a=replace-with-access-code,client_b=replace-with-access-code
+GUEST_LOGIN_ENABLED=true
+```
+
+Do not commit `.env.local`. It is ignored by `.gitignore`.
+
+Start the backend:
+
+```powershell
+python -m rag_server.main
+```
+
+Or run it with Uvicorn:
+
+```powershell
+uvicorn rag_server.main:app --host 0.0.0.0 --port 8765
+```
+
+If `.env.local` changes, restart the backend. Environment settings are loaded at process startup.
+
+## Backend Authentication
+
+The backend uses two layers of authentication.
+
+Service-level authentication:
+
+```http
+Authorization: Bearer <RAG_AUTH_TOKEN>
+```
+
+App-user authentication:
+
+```http
+X-App-Session: <app_session_token>
+```
+
+`X-App-Session` can be issued by:
+
+- Huawei login: `/v1/auth/huawei/login`
+- Customer login: `/v1/auth/customer/login`
+- Guest login: `/v1/auth/guest/login`
+
+Customer accounts are configured by `CUSTOMER_ACCOUNTS`. Each customer receives a stable identity such as:
+
+```text
+customer:client_a
+```
+
+Uploaded private documents are tagged with that identity in ChromaDB metadata. This keeps normal users separated from each other, but it is not end-to-end encryption. A server administrator can still inspect uploaded content from backend storage or runtime memory.
+
+## Backend API Summary
+
+Public endpoints:
+
+```text
+GET /
+GET /v1/rag/health
+```
+
+Authenticated endpoints:
+
+```text
+POST /v1/auth/huawei/login
+POST /v1/auth/customer/login
+POST /v1/auth/guest/login
+GET  /v1/rag/documents
+GET  /v1/rag/documents/{doc_id}/chunks
+POST /v1/rag/upload
+POST /v1/rag/upload/text
+POST /v1/rag/search
+POST /v1/rag/query
+```
+
+Document upload notes:
+
+- `/v1/rag/upload` accepts raw file bytes and extracts text on the backend.
+- `/v1/rag/upload/text` expects already extracted plain text in JSON.
+- Backend extraction currently supports `.txt`, `.md`, `.markdown`, `.pdf`, and `.docx`.
+- Binary files should not be sent through `/v1/rag/upload/text`.
+
+## Storage and Privacy
+
+Current storage model:
+
+- ChromaDB local persistence under `rag_server/chroma_data/`
+- User identity stored as document metadata, for example `owner_user_id=customer:client_a`
+- App session tokens stored locally in HarmonyOS preferences
+- No MySQL user table
+- No end-to-end encryption
+
+To reset the local vector store, stop the backend and delete:
+
+```powershell
+Remove-Item -Recurse -Force rag_server\chroma_data
+```
+
+The built-in knowledge index will be rebuilt when the backend starts again. User uploads in that local store will be removed.
+
+## Security Notes
+
+- Use strong, unique `RAG_AUTH_TOKEN`, `APP_SESSION_SECRET`, and customer access codes.
+- Do not use weak customer access codes in production.
+- Put the backend behind HTTPS and a reverse proxy or firewall before exposing it publicly.
+- Consider blocking unknown paths at the reverse proxy layer to reduce scanner traffic.
+- Do not commit signing keys, certificates, profiles, `.env.local`, API tokens, or private knowledge files.
+
+## Building the HarmonyOS App
+
+Open the repository in DevEco Studio, sync dependencies, and build the `entry` module.
+
+The app depends on the local Markdown HAR module:
+
+```text
+entry/oh-package.json5
+markdown/
+```
+
+The current app metadata is:
+
+```text
+bundleName: com.wingsluo.compass
+versionName: 2.0.0
+versionCode: 2000000
+minAPIVersion: 23
+```
+
+## Current Limitations
+
+- Per-document delete is not currently exposed as a backend API.
+- Server-side document storage is visible to the backend operator.
+- Unknown public scanner traffic may appear as many `401 Unauthorized` logs because the backend protects non-public paths with the service token middleware.
