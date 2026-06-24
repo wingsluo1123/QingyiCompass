@@ -1,97 +1,222 @@
-# 清一罗盘
+# Qingyi Compass
 
-## 简介
+Qingyi Compass is a HarmonyOS compass application focused on traditional compass and Zi Wei chart workflows.
 
-清一罗盘是一款基于 HarmonyOS 的传统堪舆罗盘应用，集成了电子罗盘、紫微星盘与 AI 智能助手，帮助风水爱好者与从业者快速获取方位、星盘数据。
+## Important Branch Notice
 
-## 环境要求
+This `main` branch is an older offline-oriented release branch.
 
-- HarmonyOS API 6.0.0 Release（API 20）及以上
-- DevEco Studio 6.0.0 Release 及以上
+The repository still contains source files for AI chat, RAG knowledge-base pages, Huawei login, and the Python RAG backend, but those cloud/backend features are not fully enabled in the current `main` app configuration.
 
-## 功能模块
+Current branch status:
 
-### 🧭 罗盘
+- App version: `1.2.0`
+- Bundle name: `com.wingsluo.compass`
+- Minimum API: HarmonyOS API 23
+- Main enabled app tabs: Compass, Star Chart, My/About
+- Network permission is commented out in `entry/src/main/module.json5`
+- Huawei Account Kit `client_id` metadata is commented out in `entry/src/main/module.json5`
+- `fluid-markdown` is commented out in `entry/oh-package.json5`
+- Knowledge-base and AI tabs are commented out in `entry/src/main/ets/pages/Index.ets`
+- Account and personal knowledge-base UI blocks are commented out in `entry/src/main/ets/pages/About.ets`
 
-- 实时传感器采集方向数据，指针始终指向正北
-- 显示当前坐向（二十四山定向：八宫配二十四山）
-- 洛书数理计算：根据年份与向方自动推导洛书九宫
-- 自定义度数输入，快速查看指定方向
-- 方向信息弹窗（坤山艮向、子山午向等详解）
+In short: this branch should be treated as the offline app baseline. Do not assume it has the full backend/customer-account/RAG behavior from newer backend-enabled work.
 
-### ⭐ 星盘
+## Enabled Features In This Branch
 
-- 紫微斗数星盘展示：显示紫微、天府十二星分布
-- 四化（化禄、化权、化科、化忌）天干地支推算
-- 命宫定位与科名星（台辅、封诰、文昌、文曲等）展示
-- 流年、流月输入分析
-- 火星、铃星、左右辅星等辅星计算
+- Compass page with custom Canvas rendering
+- Sensor-driven direction display
+- Zi Wei chart page
+- My/About page with app information and contact entries
+- Dark mode toggle with persisted preference
+- HDS-style bottom tab navigation
 
-### 🤖 AI 助手
+## Disabled Or Partially Present Features
 
-- 基于 DeepSeek API 的智能对话
-- 支持多轮对话，完整保留上下文
-- 气泡式聊天界面，用户消息与 AI 回复左右分区
+The following features have code in the repository, but are not fully active in this branch:
 
-### 📖 关于
+- AI chat page
+- RAG knowledge-base page
+- Remote document upload
+- Huawei Account Kit login entry
+- Customer-account login
+- Guest login fallback
+- Third-party Markdown rendering through `fluid-markdown`
 
-- 应用信息与使用说明
+Some of these files may compile only after their related permissions, dependencies, and page registrations are restored.
 
-## 技术特性
+## Requirements
 
-- **沉浸光感**：底部页签栏适配华为 HDS 沉浸光感效果，根据设备算力自适应材质级别
-- **传感器融合**：融合方向传感器、磁力传感器、气压传感器、GPS 定位
-- **自定义 Canvas 绘制**：罗盘与星盘均使用 Canvas 自绘，支持多层同心圆叠加与动态旋转
-- **响应式布局**：界面适配不同屏幕比例，避免固定像素导致的组件重叠
-- **AI 集成**：通过 `@kit.NetworkKit` 直接调用 DeepSeek API，无额外后端服务
+- HarmonyOS API 6.1.0 (API 23) or later
+- DevEco Studio compatible with HarmonyOS API 23
+- Python 3.10+ only if you intentionally run the optional RAG backend
 
-## 工程目录
+## App Structure
 
+```text
+AppScope/
+entry/
+  src/main/ets/
+    common/
+    component/
+    controller/
+    model/
+    pages/
+      Index.ets
+      CompassPage.ets
+      Chart.ets
+      About.ets
+      AppAboutPage.ets
+      AiChatPage.ets              # present, not enabled in main tabs
+      KnowledgePage.ets           # present, not enabled in main tabs
+      KnowledgeDetailPage.ets     # present, not enabled in main pages
+      LoginPage.ets               # present, not enabled from About page
+    service/
+      ThemeService.ets
+      AiService.ets
+      ApiConfigService.ets
+      AuthService.ets
+      RAGService.ets
+      KnowledgeService.ets
+markdown/
+rag_server/
 ```
-entry/src/main/ets/
-├─ common/
-│  ├─ CompassConstants.ets       // 八卦、天干地支、洛书等常量
-│  ├─ Constants.ets              // 通用常量
-│  └─ Logger.ets                 // 日志工具类
-├─ component/
-│  ├─ CompassView.ets            // 罗盘自定义 Canvas 组件
-│  ├─ ChartView.ets              // 星盘自定义 Canvas 组件
-│  └─ DirectionInfoDialog.ets    // 方向信息弹窗
-├─ controller/
-│  └─ CompassController.ets      // 传感器控制器
-├─ model/
-│  ├─ DirectionInfo.ets          // 方向信息数据模型
-│  └─ KeMing.ets                 // 科名星数据模型
-├─ pages/
-│  ├─ Index.ets                  // 主入口（HdsTabs 页签导航）
-│  ├─ CompassPage.ets            // 罗盘页面
-│  ├─ Chart.ets                  // 星盘页面
-│  ├─ AiChatPage.ets             // AI 对话页面
-│  ├─ About.ets                  // 关于页面
-│  └─ Horse.ets                  // 附加页面
-├─ service/
-│  └─ AiService.ets              // AI API 网络请求层
-└─ entryability/
-   └─ EntryAbility.ets
+
+Enabled pages are registered in:
+
+```text
+entry/src/main/resources/base/profile/main_pages.json
 ```
 
-## 权限说明
+Current enabled page list:
 
-| 权限 | 用途 |
-|------|------|
-| `ohos.permission.INTERNET` | AI 对话网络请求 |
-| `ohos.permission.APPROXIMATELY_LOCATION` | 获取设备大致位置 |
-| `ohos.permission.LOCATION` | 获取设备精确经纬度 |
+```text
+pages/Index
+pages/Chart
+pages/CompassPage
+pages/Horse
+pages/AppAboutPage
+```
 
-## AI 功能配置
+## Optional RAG Backend
 
-1. 申请 [DeepSeek API Key](https://platform.deepseek.com/api_keys)
-2. 在 `entry/src/main/ets/service/AiService.ets` 中替换 `API_KEY` 常量
-3. 编译运行，点击底部「🤖 AI」页签即可使用
+The Python backend still exists under:
 
-## 参考文档
+```text
+rag_server/
+```
 
-- [@ohos.sensor（传感器）](https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-sensor)
-- [@ohos.geoLocationManager（位置服务）](https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-geolocationmanager)
-- [HDS 沉浸光感](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/ui-design-hds-component-material)
-- [DeepSeek API 文档](https://api-docs.deepseek.com/zh-cn/)
+It uses:
+
+- FastAPI
+- ChromaDB
+- `sentence-transformers`
+- `rank-bm25`
+- SSE streaming
+
+It does not use MySQL. Local vector data is stored under:
+
+```text
+rag_server/chroma_data/
+```
+
+Backend dependencies are listed in:
+
+```text
+rag_server/requirements.txt
+```
+
+Start command:
+
+```powershell
+python -m rag_server.main
+```
+
+or:
+
+```powershell
+uvicorn rag_server.main:app --host 0.0.0.0 --port 8765
+```
+
+Backend environment values can be loaded from:
+
+```text
+rag_server/.env.local
+```
+
+Do not commit `.env.local`.
+
+## Current Backend Limitations On `main`
+
+This branch's backend is not the latest full customer-account backend.
+
+The current `main` backend includes:
+
+- RAG health/search/query endpoints
+- ChromaDB persistence
+- Huawei app-session endpoint
+- User document upload endpoints
+- Service-token protection through `RAG_AUTH_TOKEN`
+
+The current `main` backend does not include the newer customer-account and guest-login endpoints unless those changes are merged from the backend-enabled branch.
+
+## Re-enabling AI, RAG, And Login Features
+
+To turn this branch back into a network/backend-enabled app, review and restore these areas carefully:
+
+1. `entry/src/main/module.json5`
+   - Restore `ohos.permission.INTERNET`
+   - Restore Huawei Account Kit `client_id` metadata if Huawei login is needed
+
+2. `entry/oh-package.json5`
+   - Restore the local Markdown dependency:
+
+   ```json5
+   "fluid-markdown": "file:../markdown"
+   ```
+
+3. `entry/src/main/resources/base/profile/main_pages.json`
+   - Register pages that should be routable again, such as AI, knowledge-base, detail, and login pages.
+
+4. `entry/src/main/ets/pages/Index.ets`
+   - Restore `KnowledgePage` import and tab
+   - Restore `AiChatPage` import and tab if AI is enabled
+
+5. `entry/src/main/ets/pages/About.ets`
+   - Restore the account and personal knowledge-base card if login/account features are enabled.
+
+6. Backend branch parity
+   - If customer-account login or guest login is required, merge the backend-enabled implementation that adds `/v1/auth/customer/login` and `/v1/auth/guest/login`.
+
+7. App review and filing implications
+   - Re-enabling cloud AI, RAG, document upload, or account features changes the app from offline-only behavior to network-service behavior. Review app filing, privacy disclosure, and Huawei review requirements before release.
+
+## Upload Format Notes
+
+The backend raw upload path can extract text from:
+
+- `.txt`
+- `.md`
+- `.markdown`
+- `.pdf`
+- `.docx`
+
+The `/v1/rag/upload/text` endpoint expects already extracted plain text. Do not send binary files to `/v1/rag/upload/text`.
+
+## Security Notes
+
+- Do not commit signing material, local profiles, API tokens, RAG tokens, or `.env.local`.
+- Do not commit private knowledge files or generated vector databases.
+- `build-profile.json5` may contain local signing paths and encrypted signing fields. Keep it out of public repositories if it contains project-specific signing material.
+- `rag_server/chroma_data/` can retain source text and should not be published.
+
+## Known README Drift Fixed Here
+
+The old README was out of date because it:
+
+- Described API 20 / HarmonyOS 6.0 while the current config targets API 23 / HarmonyOS 6.1
+- Claimed cloud AI was a normal enabled feature even though the offline branch has network permission commented out
+- Did not explain that AI, RAG, account login, and knowledge-base pages are present but disabled
+- Did not mention the optional Python RAG backend
+- Did not mention ChromaDB storage
+- Did not mention that this branch is an older offline baseline
